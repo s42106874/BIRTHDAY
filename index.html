@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>生日快樂，FishNeko醬!</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: "Microsoft JhengHei", sans-serif;
+      text-align: center;
+      color: #03396c;
+      overflow-x: hidden;
+      background: linear-gradient(to bottom, #a1c4fd, #c2e9fb);
+    }
+
+    /* 中央驚喜按鈕 */
+    .surprise-btn {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-size: 2em;
+      padding: 20px 50px;
+      background: #fff;
+      color: #011f4b;
+      border: none;
+      border-radius: 20px;
+      cursor: pointer;
+      box-shadow: 0 5px 20px rgba(0,0,0,0.3);
+      transition: transform 0.3s, background 0.3s;
+      animation: floatBtn 2s ease-in-out infinite alternate;
+      z-index: 9999;
+    }
+    .surprise-btn:hover {
+      transform: translate(-50%, -50%) scale(1.1);
+      background: #c2e9fb;
+    }
+    @keyframes floatBtn {
+      from { transform: translate(-50%, -50%) translateY(0px); }
+      to { transform: translate(-50%, -50%) translateY(-10px); }
+    }
+
+    header {
+      padding: 50px 20px 20px;
+      font-size: 2.8em;
+      font-weight: bold;
+      color: #011f4b;
+      opacity: 0;
+      transition: opacity 2s;
+    }
+
+    .message {
+      font-size: 1.2rem;
+      margin: 20px auto;
+      max-width: 600px;
+      line-height: 1.8em;
+      background: rgba(255,255,255,0.6);
+      border-radius: 15px;
+      padding: 20px;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+      opacity: 0;
+      transition: opacity 3s;
+    }
+
+    /* 照片輪播 */
+    .slideshow {
+      position: relative;
+      width: 90%;
+      max-width: 400px;
+      aspect-ratio: 3/4;   /* 保持比例 */
+      margin: 40px auto;
+      overflow: hidden;
+      border-radius: 20px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+      opacity: 0;
+      transition: opacity 2s;
+    }
+    .slides { 
+      display: flex; 
+      transition: transform 0.5s ease-in-out; 
+    }
+    .slides img { 
+      width: 100%; 
+      height: 100%;          
+      object-fit: cover;      
+      border-radius: 20px; 
+      flex-shrink: 0; 
+    }
+
+    .prev, .next {
+      cursor: pointer;
+      position: absolute;
+      top: 50%;
+      width: 40px;
+      height: 40px;
+      line-height: 40px;
+      margin-top: -20px;
+      color: white;
+      font-weight: bold;
+      font-size: 28px;
+      background: rgba(0,0,0,0.4);
+      border-radius: 50%;
+      -webkit-user-select: none;
+      user-select: none;
+      transition: 0.3s;
+    }
+    .prev { left: -50px; }
+    .next { right: -50px; }
+    .prev:hover, .next:hover { background: rgba(0,0,0,0.7); }
+
+    /* 音樂控制 */
+    .music-control {
+      margin: 20px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 15px;
+      opacity: 0;
+      transition: opacity 2s;
+      flex-wrap: wrap;
+    }
+    .music-btn {
+      font-size: 28px;
+      cursor: pointer;
+      background: #fff;
+      border-radius: 50%;
+      width: 50px;
+      height: 50px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+      transition: 0.3s;
+    }
+    .music-btn:hover { background: #c2e9fb; transform: scale(1.1); }
+    input[type="range"] { width: 150px; }
+    .volume-label { margin-right: 8px; font-weight: bold; color: #011f4b; }
+
+    /* 泡泡 */
+    .bubble {
+      position: fixed;
+      bottom: -50px;
+      width: 20px;
+      height: 20px;
+      background: rgba(255,255,255,0.6);
+      border-radius: 50%;
+      animation: rise 10s infinite ease-in;
+    }
+    @keyframes rise { from { transform: translateY(0) scale(1); opacity: 1; } to { transform: translateY(-110vh) scale(0.5); opacity: 0; } }
+
+    /* 旁邊漂浮貼圖 */
+    .bg-sticker {
+      position: absolute;
+      width: 15vw;   /* 改用相對單位 */
+      max-width: 200px;
+      height: auto;
+      opacity: 0.8;
+      pointer-events: none;
+      animation: floatSticker 5s ease-in-out infinite alternate;
+    }
+    .sticker1 { top: 20vh; left: 5vw; }
+    .sticker2 { top: 70vh; right: 10vw; }
+    .sticker3 { top: 60vh; left: 10vw; }
+    .sticker4 { top: 25vh; right: 5vw; }
+    @keyframes floatSticker { from { transform: translateY(0px); } to { transform: translateY(-20px); } }
+
+    /* RWD 響應式設計 */
+    @media (max-width: 768px) {
+      header {
+        font-size: 2em;
+      }
+      .message {
+        font-size: 1rem;
+        padding: 15px;
+        max-width: 90%;
+      }
+      .music-control {
+        flex-direction: column;
+        gap: 10px;
+      }
+      .bg-sticker {
+        width: 20vw;
+      }
+    }
+
+    @media (max-width: 480px) {
+      header {
+        font-size: 1.6em;
+        padding: 30px 10px;
+      }
+      .message {
+        font-size: 0.9rem;
+        line-height: 1.5em;
+      }
+      .slideshow {
+        width: 95%;
+      }
+      .bg-sticker {
+        width: 25vw;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- 中央驚喜按鈕 -->
+  <button class="surprise-btn" id="surpriseBtn">🎁 點我驚喜 🎁</button>
+
+  <!-- Header & 文字 -->
+  <header id="header">🌊 生日快樂，我的魚貓貓-3-/ 🐚</header>
+  <div class="message" id="message">
+    親愛的寶貝，<br>
+    恭喜妳找到中醫的工作當上了社畜weee。💙<br>
+    如果上班上課有些不愉快記得回家罵我宣洩-w-v💙。<br>
+    今年實在沒錢錢送妳禮物只能寫個網頁慶祝妳生日了QQ<br>
+    最近感覺對我的不太滿意嗎(?)希望妳能多多指教這個木頭男OUO<br>
+    希望之後都能陪妳開開心心的，事事順心，工作順利!!!<br>
+    生日快樂，我的香寶！🎂💕
+  </div>
+
+  <!-- 照片輪播 -->
+  <div class="slideshow" id="slideshow">
+    <div class="slides" id="slides">
+      <img src="photo1.jpg" alt="照片1">
+      <img src="photo2.jpg" alt="照片2">
+      <img src="photo3.jpg" alt="照片3">
+      <img src="photo4.jpg" alt="照片4">
+      <img src="photo5.jpg" alt="照片5">
+      <img src="photo6.jpg" alt="照片6">
+      <img src="photo7.jpg" alt="照片7">
+    </div>
+    <a class="prev" onclick="moveSlide(-1)">❮</a>
+    <a class="next" onclick="moveSlide(1)">❯</a>
+  </div>
+
+  <!-- 音樂控制 -->
+  <div class="music-control" id="musicControl">
+    <div class="music-btn" id="muteBtn" title="靜音/開啟音樂">🔊</div>
+    <label for="volume" class="volume-label">音量</label>
+    <input type="range" id="volume" min="0" max="1" step="0.1" value="1">
+  </div>
+
+  <!-- 旁邊漂浮貼圖 -->
+  <img src="sticker1.png" class="bg-sticker sticker1" alt="貼圖1">
+  <img src="sticker2.png" class="bg-sticker sticker2" alt="貼圖2">
+  <img src="sticker3.png" class="bg-sticker sticker3" alt="貼圖3">
+  <img src="sticker4.png" class="bg-sticker sticker4" alt="貼圖4">
+
+  <!-- 背景音樂 -->
+  <audio id="bgMusic" loop>
+    <source src="music.mp3" type="audio/mpeg">
+  </audio>
+
+  <script>
+    const surpriseBtn = document.getElementById("surpriseBtn");
+    const header = document.getElementById("header");
+    const message = document.getElementById("message");
+    const slideshow = document.getElementById("slideshow");
+    const musicControl = document.getElementById("musicControl");
+    const music = document.getElementById("bgMusic");
+    const muteBtn = document.getElementById("muteBtn");
+    const volume = document.getElementById("volume");
+    const slides = document.getElementById("slides");
+    const totalSlides = slides.children.length;
+    let slideIndex = 0;
+    let autoSlideInterval;
+    let bubbleInterval;
+
+    // 點擊驚喜按鈕
+    surpriseBtn.addEventListener("click", () => {
+      surpriseBtn.style.display = "none";
+      header.style.opacity = 1;
+      message.style.opacity = 1;
+      slideshow.style.opacity = 1;
+      musicControl.style.opacity = 1;
+      music.play().catch(()=>{}); // 觸發瀏覽器播放
+      autoSlideInterval = setInterval(() => { moveSlide(1); }, 4000);
+      startBubbles();
+    });
+
+    function moveSlide(step) {
+      slideIndex = (slideIndex + step + totalSlides) % totalSlides;
+      slides.style.transform = `translateX(-${slideIndex * 100}%)`;
+    }
+
+    // 音樂控制
+    muteBtn.addEventListener("click", () => {
+      music.muted = !music.muted;
+      muteBtn.textContent = music.muted ? "🔇" : "🔊";
+    });
+    volume.addEventListener("input", () => { music.volume = volume.value; });
+
+    // 泡泡動畫
+    function createBubble() {
+      const bubble = document.createElement("div");
+      bubble.classList.add("bubble");
+      bubble.style.left = Math.random() * 100 + "vw";
+      bubble.style.width = bubble.style.height = Math.random() * 20 + 10 + "px";
+      bubble.style.animationDuration = (5 + Math.random() * 5) + "s";
+      document.body.appendChild(bubble);
+      setTimeout(() => { bubble.remove(); }, 10000);
+    }
+    function startBubbles() { bubbleInterval = setInterval(createBubble, 600); }
+  </script>
+</body>
+</html>
